@@ -22,7 +22,9 @@ Supervision WAN : état Livebox, débits Cloudflare P90, latence, puissance opti
 
 ```yaml
 type: custom:wan-card
-wan_status: binary_sensor.livebox_fibre_wan_status
+# Remplacer <LIVEBOX> par le nom de votre intégration Livebox dans HA
+# (visible dans Paramètres → Intégrations → Livebox)
+wan_status: binary_sensor.<LIVEBOX>_wan_status
 speed_down: sensor.cloudflare_speed_test_90th_percentile_down
 speed_up: sensor.cloudflare_speed_test_90th_percentile_up
 latency: sensor.cloudflare_speed_test_latency
@@ -30,18 +32,20 @@ jitter: sensor.cloudflare_speed_test_jitter
 isp: sensor.cloudflare_speed_test_isp
 ip_public: sensor.cloudflare_speed_test_ip_address
 # Options
-gpon_rx: sensor.livebox_fibre_wan_gpon_rate_rx
-gpon_tx: sensor.livebox_fibre_wan_gpon_rate_tx
-optical_rx: sensor.livebox_fibre_fiber_power_rx
-optical_tx: sensor.livebox_fibre_fiber_power_tx
-uptime: sensor.livebox_fibre_uptime
-dhcp_leases: sensor.livebox_fibre_dhcp_leases
-dhcp_guest: sensor.livebox_fibre_guest_dhcp_leases
-restart_button: button.livebox_fibre_livebox_restart
+gpon_rx: sensor.<LIVEBOX>_wan_gpon_rate_rx
+gpon_tx: sensor.<LIVEBOX>_wan_gpon_rate_tx
+optical_rx: sensor.<LIVEBOX>_fiber_power_rx
+optical_tx: sensor.<LIVEBOX>_fiber_power_tx
+uptime: sensor.<LIVEBOX>_uptime
+dhcp_leases: sensor.<LIVEBOX>_dhcp_leases
+dhcp_guest: sensor.<LIVEBOX>_guest_dhcp_leases
+restart_button: button.<LIVEBOX>_livebox_restart
 cloudflared_version: update.cloudflared_mise_a_jour
 cloudflared_running: binary_sensor.cloudflared_running
 speedtest_trigger: sensor.cloudflare_speed_test_90th_percentile_down
 ```
+
+> **`<LIVEBOX>`** : identifiant créé par l'intégration [Livebox](https://github.com/cyr-ius/hass-livebox-component) à partir du nom de votre box. Visible dans **Paramètres → Intégrations → Livebox → entités**.
 
 ### `custom:lan-meraki-card`
 

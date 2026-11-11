@@ -164,6 +164,14 @@ export class LanMerakiCard extends LitElement {
     }
   `;
 
+  static getConfigElement(): HTMLElement {
+    return document.createElement('lan-meraki-card-editor');
+  }
+
+  static getStubConfig(): LanMerakiCardConfig {
+    return { type: 'custom:lan-meraki-card', devices: [] };
+  }
+
   setConfig(config: LanMerakiCardConfig) {
     if (!config.devices || !Array.isArray(config.devices)) throw new Error('devices est requis');
     this._config = config;

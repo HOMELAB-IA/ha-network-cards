@@ -140,6 +140,21 @@ const iconWifi = b `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="1
 const iconExternalLink = b `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>`;
 
 class WanCard extends i {
+    static getConfigElement() {
+        return document.createElement('wan-card-editor');
+    }
+    static getStubConfig() {
+        return {
+            type: 'custom:wan-card',
+            wan_status: '',
+            speed_down: '',
+            speed_up: '',
+            latency: '',
+            jitter: '',
+            isp: '',
+            ip_public: '',
+        };
+    }
     setConfig(config) {
         if (!config.wan_status)
             throw new Error('wan_status est requis');
@@ -587,6 +602,12 @@ __decorate([
 ], WanCard.prototype, "_config", void 0);
 
 class LanMerakiCard extends i {
+    static getConfigElement() {
+        return document.createElement('lan-meraki-card-editor');
+    }
+    static getStubConfig() {
+        return { type: 'custom:lan-meraki-card', devices: [] };
+    }
     setConfig(config) {
         if (!config.devices || !Array.isArray(config.devices))
             throw new Error('devices est requis');
@@ -844,6 +865,12 @@ __decorate([
 ], LanMerakiCard.prototype, "_config", void 0);
 
 class Mx64DualWanCard extends i {
+    static getConfigElement() {
+        return document.createElement('mx64-dual-wan-card-editor');
+    }
+    static getStubConfig() {
+        return { type: 'custom:mx64-dual-wan-card' };
+    }
     setConfig(config) {
         this._config = config;
     }
@@ -1003,6 +1030,177 @@ __decorate([
 __decorate([
     r()
 ], Mx64DualWanCard.prototype, "_config", void 0);
+
+const SCHEMA$2 = [
+    { name: 'wan_status', selector: { entity: { domain: 'binary_sensor' } } },
+    { name: 'speed_down', selector: { entity: { domain: 'sensor' } } },
+    { name: 'speed_up', selector: { entity: { domain: 'sensor' } } },
+    { name: 'latency', selector: { entity: { domain: 'sensor' } } },
+    { name: 'jitter', selector: { entity: { domain: 'sensor' } } },
+    { name: 'isp', selector: { entity: { domain: 'sensor' } } },
+    { name: 'ip_public', selector: { entity: { domain: 'sensor' } } },
+    { name: 'gpon_rx', selector: { entity: { domain: 'sensor' } } },
+    { name: 'gpon_tx', selector: { entity: { domain: 'sensor' } } },
+    { name: 'optical_rx', selector: { entity: { domain: 'sensor' } } },
+    { name: 'optical_tx', selector: { entity: { domain: 'sensor' } } },
+    { name: 'uptime', selector: { entity: { domain: 'sensor' } } },
+    { name: 'dhcp_leases', selector: { entity: { domain: 'sensor' } } },
+    { name: 'dhcp_guest', selector: { entity: { domain: 'sensor' } } },
+    { name: 'restart_button', selector: { entity: { domain: 'button' } } },
+    { name: 'cloudflared_version', selector: { entity: { domain: 'update' } } },
+    { name: 'cloudflared_running', selector: { entity: { domain: 'binary_sensor' } } },
+    { name: 'speedtest_trigger', selector: { entity: { domain: 'sensor' } } },
+];
+const LABELS$2 = {
+    wan_status: 'État WAN (binary_sensor) ✱',
+    speed_down: 'Débit descendant Cloudflare Speed Test ✱',
+    speed_up: 'Débit montant Cloudflare Speed Test ✱',
+    latency: 'Latence ✱',
+    jitter: 'Jitter ✱',
+    isp: 'FAI ✱',
+    ip_public: 'IP publique ✱',
+    gpon_rx: 'Débit GPON max descendant',
+    gpon_tx: 'Débit GPON max montant',
+    optical_rx: 'Puissance optique RX',
+    optical_tx: 'Puissance optique TX',
+    uptime: 'Uptime de la box',
+    dhcp_leases: 'Baux DHCP LAN',
+    dhcp_guest: 'Baux DHCP invités',
+    restart_button: 'Bouton de redémarrage Livebox',
+    cloudflared_version: 'Mise à jour cloudflared',
+    cloudflared_running: 'État cloudflared',
+    speedtest_trigger: 'Entité pour déclencher un speed test',
+};
+class WanCardEditor extends i {
+    setConfig(config) {
+        this._config = config;
+    }
+    render() {
+        if (!this._config)
+            return A;
+        return b `
+      <ha-form
+        .hass=${this.hass}
+        .data=${this._config}
+        .schema=${SCHEMA$2}
+        .computeLabel=${(s) => LABELS$2[s.name] ?? s.name}
+        @value-changed=${this._valueChanged}
+      ></ha-form>
+    `;
+    }
+    _valueChanged(ev) {
+        this.dispatchEvent(new CustomEvent('config-changed', {
+            detail: { config: ev.detail.value },
+            bubbles: true,
+            composed: true,
+        }));
+    }
+}
+__decorate([
+    n({ attribute: false })
+], WanCardEditor.prototype, "hass", void 0);
+__decorate([
+    r()
+], WanCardEditor.prototype, "_config", void 0);
+if (typeof customElements !== 'undefined') {
+    customElements.define('wan-card-editor', WanCardEditor);
+}
+
+const SCHEMA$1 = [
+    { name: 'dashboard_url', selector: { text: { type: 'url' } } },
+];
+const LABELS$1 = {
+    dashboard_url: 'URL du dashboard Meraki',
+};
+const HELPERS$1 = {
+    dashboard_url: 'Ex: https://dashboard.meraki.com — affiché comme lien en bas de la carte.',
+};
+class LanMerakiCardEditor extends i {
+    setConfig(config) {
+        this._config = config;
+    }
+    render() {
+        if (!this._config)
+            return A;
+        return b `
+      <ha-form
+        .hass=${this.hass}
+        .data=${this._config}
+        .schema=${SCHEMA$1}
+        .computeLabel=${(s) => LABELS$1[s.name] ?? s.name}
+        .computeHelper=${(s) => HELPERS$1[s.name] ?? ''}
+        @value-changed=${this._valueChanged}
+      ></ha-form>
+      <p style="font-size:0.85em;color:var(--secondary-text-color);margin:12px 4px 0">
+        La liste des appareils (<code>devices</code>) doit être configurée en YAML.
+      </p>
+    `;
+    }
+    _valueChanged(ev) {
+        this.dispatchEvent(new CustomEvent('config-changed', {
+            detail: { config: ev.detail.value },
+            bubbles: true,
+            composed: true,
+        }));
+    }
+}
+__decorate([
+    n({ attribute: false })
+], LanMerakiCardEditor.prototype, "hass", void 0);
+__decorate([
+    r()
+], LanMerakiCardEditor.prototype, "_config", void 0);
+if (typeof customElements !== 'undefined') {
+    customElements.define('lan-meraki-card-editor', LanMerakiCardEditor);
+}
+
+const SCHEMA = [
+    { name: 'wan1_status', selector: { entity: { domain: 'sensor' } } },
+    { name: 'wan2_status', selector: { entity: { domain: 'sensor' } } },
+];
+const LABELS = {
+    wan1_status: 'Statut WAN 1 (Meraki MX)',
+    wan2_status: 'Statut WAN 2 (Meraki MX)',
+};
+const HELPERS = {
+    wan1_status: "Valeurs attendues : active · ready · failed · not connected",
+    wan2_status: "Valeurs attendues : active · ready · failed · not connected",
+};
+class Mx64DualWanCardEditor extends i {
+    setConfig(config) {
+        this._config = config;
+    }
+    render() {
+        if (!this._config)
+            return A;
+        return b `
+      <ha-form
+        .hass=${this.hass}
+        .data=${this._config}
+        .schema=${SCHEMA}
+        .computeLabel=${(s) => LABELS[s.name] ?? s.name}
+        .computeHelper=${(s) => HELPERS[s.name] ?? ''}
+        @value-changed=${this._valueChanged}
+      ></ha-form>
+    `;
+    }
+    _valueChanged(ev) {
+        this.dispatchEvent(new CustomEvent('config-changed', {
+            detail: { config: ev.detail.value },
+            bubbles: true,
+            composed: true,
+        }));
+    }
+}
+__decorate([
+    n({ attribute: false })
+], Mx64DualWanCardEditor.prototype, "hass", void 0);
+__decorate([
+    r()
+], Mx64DualWanCardEditor.prototype, "_config", void 0);
+if (typeof customElements !== 'undefined') {
+    customElements.define('mx64-dual-wan-card-editor', Mx64DualWanCardEditor);
+}
 
 if (typeof customElements !== 'undefined') {
     customElements.define('wan-card', WanCard);

@@ -22,6 +22,14 @@ export class Mx64DualWanCard extends LitElement {
     }
   `;
 
+  static getConfigElement(): HTMLElement {
+    return document.createElement('mx64-dual-wan-card-editor');
+  }
+
+  static getStubConfig(): Mx64DualWanCardConfig {
+    return { type: 'custom:mx64-dual-wan-card' };
+  }
+
   setConfig(config: Mx64DualWanCardConfig) {
     this._config = config;
   }

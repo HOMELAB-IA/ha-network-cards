@@ -260,6 +260,23 @@ export class WanCard extends LitElement {
     }
   `;
 
+  static getConfigElement(): HTMLElement {
+    return document.createElement('wan-card-editor');
+  }
+
+  static getStubConfig(): WanCardConfig {
+    return {
+      type: 'custom:wan-card',
+      wan_status: '',
+      speed_down: '',
+      speed_up: '',
+      latency: '',
+      jitter: '',
+      isp: '',
+      ip_public: '',
+    };
+  }
+
   setConfig(config: WanCardConfig) {
     if (!config.wan_status) throw new Error('wan_status est requis');
     if (!config.speed_down) throw new Error('speed_down est requis');
